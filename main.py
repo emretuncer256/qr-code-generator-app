@@ -10,6 +10,9 @@ from qrcode.constants import ERROR_CORRECT_L
 import os
 
 
+basedir = os.path.dirname(__file__)
+
+
 class QRCodeGeneratorApp(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(QRCodeGeneratorApp, self).__init__()
@@ -21,7 +24,7 @@ class QRCodeGeneratorApp(QMainWindow, Ui_MainWindow):
         self.initSignalSlot()
 
     def loadQss(self) -> None:
-        with open("style.qss", "r") as f:
+        with open(os.path.join(basedir, "style.qss"), "r") as f:
             self.setStyleSheet(f.read())
 
     def initDefaultValues(self):
@@ -68,9 +71,9 @@ class QRCodeGeneratorApp(QMainWindow, Ui_MainWindow):
         qr.add_data(data)
         qr.make(fit=True)
         qrImage = qr.make_image(fill_color=fillColor, back_color=backColor)
-        qrImage.save("output.png")
+        qrImage.save(os.path.join(basedir, "output.png"))
 
-        self.outputLabel.setPixmap(QPixmap("output.png"))
+        self.outputLabel.setPixmap(QPixmap(os.path.join(basedir, "output.png")))
 
     def saveButton_Clicked(self):
         filePath, _ = QFileDialog.getSaveFileName(
@@ -100,12 +103,13 @@ class QRCodeGeneratorApp(QMainWindow, Ui_MainWindow):
 
     def closeEvent(self, event: QCloseEvent):
         super().closeEvent(event)
-        if os.path.exists("output.png"):
-            os.remove("output.png")
+        if os.path.exists(os.path.join(basedir, "output.png")):
+            os.remove(os.path.join(basedir, "output.png"))
 
 
 if __name__ == "__main__":
     app = QApplication([])
+    app.setWindowIcon(QIcon(os.path.join(basedir, "qrcode.ico")))
     window = QRCodeGeneratorApp()
     window.show()
     app.exec()
